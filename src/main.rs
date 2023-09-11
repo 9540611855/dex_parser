@@ -28,7 +28,10 @@ fn main() {
     //解析dex_string
     let dex_string=parser::dex_string::DexStringId::read_dex_string
         (file_path,dex_header.string_ids_off,dex_header.string_ids_size);
-    let dex_data=parser::dex_string::StringData::read_dex_data(file_path,dex_string);
-    println!("{:?}",dex_data);
+    let dex_datas=parser::dex_string::StringData::read_dex_data(file_path,dex_string);
+    //parser::dex_string::StringData::print_data_by_idx(dex_datas,0x4700);
+    let dex_types=parser::dex_type::DexTypeId::read_dex_string
+        (file_path,dex_header.type_ids_off,dex_header.type_ids_size);
+    parser::dex_type::DexTypeId::print_all_type(dex_types,dex_datas);
 
 }
