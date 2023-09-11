@@ -9,7 +9,7 @@ pub struct DexTypeId {
 }
 
 impl DexTypeId {
-    pub fn read_dex_string(file_path:&str,type_ids_off:u32,type_ids_size:u32)->Vec<DexTypeId>{
+    pub fn read_dex_type(file_path:&str,type_ids_off:u32,type_ids_size:u32)->Vec<DexTypeId>{
         const U32Size: usize = core::mem::size_of::<u32>();
         let endian=endian::AnyEndian::new(1);
         let  mut v: Vec<DexTypeId>=Vec::new();
