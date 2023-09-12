@@ -59,6 +59,28 @@ pub struct classData{
      virtualMethodsSize:u8,
 
 }
+
+pub struct DexField{
+    fieldIdx:u32,
+    accessFlags:u32,
+}
+
+pub struct DexMethod {
+    methodIdx:u32,
+    accessFlags:u32,
+    codeOff:u32,
+}
+pub struct DexCode {
+    registers_size: u16,
+    ins_size: u16,
+    outs_size: u16,
+    tries_size: u16,
+    debug_info_off: u32,
+    insns_size: u32,
+    insns: [u16],
+}
+
+
 impl classData{
     fn uleb128_value(data: &[u8], off: usize) -> (u32, usize) {
         let mut size = 1;
