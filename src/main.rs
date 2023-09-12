@@ -32,6 +32,14 @@ fn main() {
     //parser::dex_string::StringData::print_data_by_idx(dex_datas,0x4700);
     let dex_types=parser::dex_type::DexTypeId::read_dex_type
         (file_path,dex_header.type_ids_off,dex_header.type_ids_size);
-    parser::dex_type::DexTypeId::print_all_type(dex_types,dex_datas);
 
+    //parser::dex_type::DexTypeId::print_all_type(dex_types,dex_datas);
+    //parser proto
+    let dex_proto=parser::dex_proto::DexProtoId::read_dex_proto
+        (file_path,dex_header.proto_ids_off,dex_header.proto_ids_size);
+
+    let dex_proto_paramters=parser::dex_proto::ProtoParameters::
+    read_dex_proto_parameter(file_path,dex_proto);
+    //println!("{:?}",dex_proto_paramters);
+    
 }
