@@ -1,6 +1,7 @@
 extern crate core;
 
 use std::env;
+use crate::parser::dex_header::header;
 
 mod parser;
 
@@ -35,11 +36,18 @@ fn main() {
 
     //parser::dex_type::DexTypeId::print_all_type(dex_types,dex_datas);
     //parser proto
-    let dex_proto=parser::dex_proto::DexProtoId::read_dex_proto
+    let dex_protos=parser::dex_proto::DexProtoId::read_dex_proto
         (file_path,dex_header.proto_ids_off,dex_header.proto_ids_size);
 
     let dex_proto_paramters=parser::dex_proto::ProtoParameters::
-    read_dex_proto_parameter(file_path,dex_proto);
+    read_dex_proto_parameter(file_path,dex_protos);
     //println!("{:?}",dex_proto_paramters);
-    
+    let dex_fields=parser::dex_field
+    ::DexFieldId::read_dex_field(file_path,dex_header.field_ids_off,dex_header.field_ids_size);
+    //println!("{:?}",dex_field);
+
+    let dex_methods=parser::dex_method::DexMethodId
+    ::read_dex_method(file_path,dex_header.method_ids_off,dex_header.method_ids_size);
+    //println!("{:?}",dex_methods);
+
 }
