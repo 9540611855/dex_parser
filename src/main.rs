@@ -49,5 +49,7 @@ fn main() {
     let dex_methods=parser::dex_method::DexMethodId
     ::read_dex_method(file_path,dex_header.method_ids_off,dex_header.method_ids_size);
     //println!("{:?}",dex_methods);
-
+    let dex_classdefs=parser::dex_classdef
+    ::DexClassDef::read_dex_classdefs(file_path,dex_header.class_defs_off,dex_header.class_defs_size);
+    println!("{:?}",dex_classdefs);
 }
