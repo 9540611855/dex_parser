@@ -52,4 +52,10 @@ fn main() {
     let dex_classdefs=parser::dex_classdef
     ::DexClassDef::read_dex_classdefs(file_path,dex_header.class_defs_off,dex_header.class_defs_size);
     println!("{:?}",dex_classdefs);
+
+    let class_datas=parser::dex_classdef::classData::read_dex_class_data
+        (file_path,dex_classdefs,dex_header.file_size);
+    println!("{:?}",class_datas);
+
+    
 }

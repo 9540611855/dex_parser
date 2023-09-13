@@ -51,25 +51,29 @@ impl DexClassDef{
     }
 }
 
-
+#[derive(Debug,Clone,PartialEq)]
 pub struct classData{
-     staticFieldsSize:u8,
-     instanceFieldsSize:u8,
-     directMethodsSize:u8,
-     virtualMethodsSize:u8,
-
+     staticFieldsSize:u32,
+     instanceFieldsSize:u32,
+     directMethodsSize:u32,
+     virtualMethodsSize:u32,
+     staticField:Vec<DexField>,
+     instanceField:Vec<DexField>,
+     directMethods:Vec<DexMethod>,
+     virtualMethods:Vec<DexMethod>,
 }
-
+#[derive(Debug,Clone,PartialEq)]
 pub struct DexField{
     fieldIdx:u32,
     accessFlags:u32,
 }
-
+#[derive(Debug,Clone,PartialEq)]
 pub struct DexMethod {
     methodIdx:u32,
     accessFlags:u32,
     codeOff:u32,
 }
+#[derive(Debug,Clone,PartialEq)]
 pub struct DexCode {
     registers_size: u16,
     ins_size: u16,
@@ -77,7 +81,7 @@ pub struct DexCode {
     tries_size: u16,
     debug_info_off: u32,
     insns_size: u32,
-    insns: [u16],
+    insns: Vec<u8>,
 }
 
 
@@ -113,14 +117,80 @@ impl classData{
         (result, size)
     }
 
-    pub fn read_dex_class_data(file_path:&str,class_defs:Vec<DexClassDef>,file_size:u32){
+    pub fn read_dex_class_data(file_path:&str,class_defs:Vec<DexClassDef>,file_size:u32)->Vec<classData>{
+        let mut v:Vec<classData>=Vec::new();
+        //read all dex bytes
+        let dex_bytes=parser::file_stream::file_utils::read_file_range
+            (file_path,0,file_size as u64).unwrap();
         for class_def in class_defs{
             let class_data_off=class_def.classDataOff;
-
-
+            let (class_data,_)=Self::parser_dex_class_data
+                (dex_bytes.clone(), class_data_off as usize);
+            v.push(class_data);
         }
+        return v;
     }
-    pub fn parser_dex_class_data(){
+    pub fn parser_dex_class_data(class_data:Vec<u8>,off:usize)->(classData,usize){
+        let mut offset=off;
+        let (staticFieldsSize,off_size)=Self::uleb128_value(&class_data,offset);
+        offset+=off_size;
+        let (instanceFieldsSize,off_size)=Self::uleb128_value(&class_data,offset);
+        offset+=off_size;
+        let (directMethodsSize,off_size)=Self::uleb128_value(&class_data,offset);
+        offset+=off_size;
+        let (virtualMethodsSize,off_size)=Self::uleb128_value(&class_data,offset);
+        offset+=off_size;
+        let (staticField,offset)=Self::parser_dex_class_dex_field
+            (class_data.clone(),offset,staticFieldsSize);
+        let (instanceField,offset)=Self::parser_dex_class_dex_field
+            (class_data.clone(),offset,instanceFieldsSize);
+        let (directMethods,offset)=Self::parser_dex_class_dex_method
+            (class_data.clone(),offset,directMethodsSize);
+        let (virtualMethods,offset)=Self::parser_dex_class_dex_method
+            (class_data.clone(),offset,virtualMethodsSize);
+        let class_data=classData{
+            staticFieldsSize,
+            instanceFieldsSize,
+            directMethodsSize,
+            virtualMethodsSize,
+            staticField,
+            instanceField,
+            directMethods,
+            virtualMethods,
+        };
+        return (class_data,offset);
 
+    }
+    pub fn parser_dex_class_dex_field(class_data:Vec<u8>,off:usize,fields_size:u32)->(Vec<DexField>,usize){
+        let mut offset=off;
+        let mut v:Vec<DexField>=Vec::new();
+        for _ in 0..fields_size{
+            let (fieldIdx,off_size)=Self::uleb128_value(&class_data,offset);
+            offset+=off_size;
+            let (accessFlags,off_size)=Self::uleb128_value(&class_data,offset);
+            offset+=off_size;
+            let dex_field=DexField{fieldIdx, accessFlags};
+            v.push(dex_field);
+        }
+
+        return (v,offset);
+    }
+
+    pub fn parser_dex_class_dex_method(class_data:Vec<u8>,off:usize,methods_size:u32)->(Vec<DexMethod>,usize){
+
+        let mut offset=off;
+        let mut v:Vec<DexMethod>=Vec::new();
+        for _ in 0..methods_size{
+            let (methodIdx,off_size)=Self::uleb128_value(&class_data,offset);
+            offset+=off_size;
+            let (accessFlags,off_size)=Self::uleb128_value(&class_data,offset);
+            offset+=off_size;
+            let (codeOff,off_size)=Self::uleb128_value(&class_data,offset);
+            offset+=off_size;
+            let dex_method=DexMethod{methodIdx, accessFlags,codeOff};
+            v.push(dex_method);
+        }
+
+        return (v,offset);
     }
 }
