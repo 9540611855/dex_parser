@@ -2,7 +2,7 @@ use crate::parser;
 use crate::parser::endian;
 use crate::parser::endian::EndianParse;
 
-#[derive(Debug,Clone,PartialEq)]
+#[derive(Debug,Clone,PartialEq,Copy)]
 pub struct DexMethodId{
     pub classIdx:u16,
     pub protoIdx:u16,

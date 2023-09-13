@@ -29,7 +29,7 @@ fn main() {
     //解析dex_string
     let dex_string=parser::dex_string::DexStringId::read_dex_string
         (file_path,dex_header.string_ids_off,dex_header.string_ids_size);
-    let dex_datas=parser::dex_string::StringData::read_dex_data(file_path,dex_string);
+    let dex_datas=parser::dex_string::StringData::read_dex_data(file_path,dex_string.clone());
     //parser::dex_string::StringData::print_data_by_idx(dex_datas,0x4700);
     let dex_types=parser::dex_type::DexTypeId::read_dex_type
         (file_path,dex_header.type_ids_off,dex_header.type_ids_size);
@@ -40,7 +40,7 @@ fn main() {
         (file_path,dex_header.proto_ids_off,dex_header.proto_ids_size);
 
     let dex_proto_paramters=parser::dex_proto::ProtoParameters::
-    read_dex_proto_parameter(file_path,dex_protos);
+    read_dex_proto_parameter(file_path,dex_protos.clone());
     //println!("{:?}",dex_proto_paramters);
     let dex_fields=parser::dex_field
     ::DexFieldId::read_dex_field(file_path,dex_header.field_ids_off,dex_header.field_ids_size);
@@ -51,10 +51,26 @@ fn main() {
     //println!("{:?}",dex_methods);
     let dex_classdefs=parser::dex_classdef
     ::DexClassDef::read_dex_classdefs(file_path,dex_header.class_defs_off,dex_header.class_defs_size);
-    println!("{:?}",dex_classdefs);
-
+    //println!("{:?}",dex_classdefs);
+    //big dex  long time
+    /*
     let class_datas=parser::dex_classdef::classData::read_dex_class_data
-        (file_path,dex_classdefs,dex_header.file_size);
-    println!("{:?}",class_datas);
+        (file_path,dex_classdefs.clone(),dex_header.file_size);
+    */
 
+
+    //println!("{:?}",class_datas);
+    parser::dex_classdef::DexClassDef::print_dex_class_dex(
+        file_path,
+        dex_header.file_size,
+        dex_classdefs[0],
+        dex_string,
+        dex_datas,
+        dex_types,
+        dex_protos,
+        dex_proto_paramters,
+        dex_fields,
+        dex_methods,
+        //class_datas,
+    );
 }

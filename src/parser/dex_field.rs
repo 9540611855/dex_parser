@@ -2,7 +2,7 @@ use crate::parser;
 use crate::parser::endian;
 use crate::parser::endian::EndianParse;
 
-#[derive(Debug,Clone,PartialEq)]
+#[derive(Debug,Clone,PartialEq,Copy)]
 pub struct DexFieldId{
     pub classIdx:u16,
     pub typeIdx:u16,

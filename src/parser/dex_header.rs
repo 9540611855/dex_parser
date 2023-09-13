@@ -165,7 +165,7 @@ impl header{
             data_size,
             data_off
         };
-        println!("{:?}",dex_header);
+        //println!("{:?}",dex_header);
         return Some(dex_header);
     }
 
