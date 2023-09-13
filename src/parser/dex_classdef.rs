@@ -197,6 +197,7 @@ impl classData{
 
 impl DexCode {
     pub fn parser_data_code(file_path:&str,method_data:DexMethod,file_size:u32)->DexCode{
+        let endian=endian::AnyEndian::new(1);
         //read all dex bytes
         let dex_bytes=parser::file_stream::file_utils::read_file_range
             (file_path,0,file_size as u64).unwrap();
@@ -214,7 +215,8 @@ pub struct DexCode {
 
 */
         let code_off=method_data.codeOff;
-        let mut offset=code_off;
+        let mut offset=code_off as usize;
+        let register_size= endian.parse_u16_at(&mut offset, &dex_bytes);
         let register_size= endian.parse_u16_at(&mut offset, &dex_bytes);
     }
 }
