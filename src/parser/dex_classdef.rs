@@ -4,14 +4,14 @@ use crate::parser::endian::EndianParse;
 
 #[derive(Debug,Clone,PartialEq)]
 pub struct DexClassDef {
-    classIdx: u32,
-    accessFlags: u32,
-    superclassIdx: u32,
-    interfacesOff: u32,
-    sourceFileIdx: u32,
-    annotationsOff: u32,
-    classDataOff: u32,
-    staticValuesOff: u32,
+    pub classIdx: u32,
+    pub accessFlags: u32,
+    pub superclassIdx: u32,
+    pub interfacesOff: u32,
+    pub sourceFileIdx: u32,
+    pub annotationsOff: u32,
+    pub classDataOff: u32,
+    pub staticValuesOff: u32,
 }
 
 impl DexClassDef{
@@ -53,35 +53,35 @@ impl DexClassDef{
 
 #[derive(Debug,Clone,PartialEq)]
 pub struct classData{
-     staticFieldsSize:u32,
-     instanceFieldsSize:u32,
-     directMethodsSize:u32,
-     virtualMethodsSize:u32,
-     staticField:Vec<DexField>,
-     instanceField:Vec<DexField>,
-     directMethods:Vec<DexMethod>,
-     virtualMethods:Vec<DexMethod>,
+     pub staticFieldsSize:u32,
+     pub instanceFieldsSize:u32,
+     pub directMethodsSize:u32,
+     pub virtualMethodsSize:u32,
+     pub staticField:Vec<DexField>,
+     pub instanceField:Vec<DexField>,
+     pub directMethods:Vec<DexMethod>,
+     pub virtualMethods:Vec<DexMethod>,
 }
 #[derive(Debug,Clone,PartialEq)]
 pub struct DexField{
-    fieldIdx:u32,
-    accessFlags:u32,
+    pub fieldIdx:u32,
+    pub accessFlags:u32,
 }
 #[derive(Debug,Clone,PartialEq)]
 pub struct DexMethod {
-    methodIdx:u32,
-    accessFlags:u32,
-    codeOff:u32,
+    pub methodIdx:u32,
+    pub accessFlags:u32,
+    pub codeOff:u32,
 }
 #[derive(Debug,Clone,PartialEq)]
 pub struct DexCode {
-    registers_size: u16,
-    ins_size: u16,
-    outs_size: u16,
-    tries_size: u16,
-    debug_info_off: u32,
-    insns_size: u32,
-    insns: Vec<u8>,
+    pub registers_size: u16,
+    pub ins_size: u16,
+    pub  outs_size: u16,
+    pub tries_size: u16,
+    pub debug_info_off: u32,
+    pub insns_size: u32,
+    pub insns: Vec<u8>,
 }
 
 
@@ -192,5 +192,29 @@ impl classData{
         }
 
         return (v,offset);
+    }
+}
+
+impl DexCode {
+    pub fn parser_data_code(file_path:&str,method_data:DexMethod,file_size:u32)->DexCode{
+        //read all dex bytes
+        let dex_bytes=parser::file_stream::file_utils::read_file_range
+            (file_path,0,file_size as u64).unwrap();
+/*
+pub struct DexCode {
+    pub registers_size: u16,
+    pub ins_size: u16,
+    pub  outs_size: u16,
+    pub tries_size: u16,
+    pub debug_info_off: u32,
+    pub insns_size: u32,
+    pub insns: Vec<u8>,
+}
+
+
+*/
+        let code_off=method_data.codeOff;
+        let mut offset=code_off;
+        let register_size= endian.parse_u16_at(&mut offset, &dex_bytes);
     }
 }
